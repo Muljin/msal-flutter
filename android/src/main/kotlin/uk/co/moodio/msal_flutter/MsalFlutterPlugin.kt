@@ -28,18 +28,14 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun isClientInitialized() = ::msalApp.isInitialized
 
 
-
-
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
     }
 
     override fun onDetachedFromActivity() {
-        Log.d("MsalFlutter","Detached from activity")
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        Log.d("MsalFlutter","Detached from activity for config")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding){
@@ -47,14 +43,12 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        Log.d("MsalFlutter", "MSAL attached")
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "msal_flutter")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext;
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        Log.d("MsalFlutter", "MSAL detached");
         channel.setMethodCallHandler(null)
     }
 
