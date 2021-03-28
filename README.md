@@ -1,7 +1,19 @@
 ## UPDATES IN PROGRESS
 Please note updates are currently in progress. We are not currently accepting any PRs.
 
-# VERSION 1.0.0+ WARNING
+## Version 2.0.0-alpha.1
+Warning this is an EXTREMELY unstable version of the build while we test new features. Please do not upgrade to this package except for testing. Please do not create any github issues in relation to this version.
+
+Version 2.0.0+ have moved to nullable and a non-nullable version will not be available. Please ensure all packages you use support nullable and you have updated to the latest version of stable flutter.
+
+### Upgrade guide
+To upgrade older projects to V2, make sure to do the following:
+- Update gradle to 3.6.0+
+- Update Kotlin to 1.4.31 or later (Might work, but not tested with lower versions of 1.4.0+ of kotlin)
+- Update the msal_default_config.json file to the latest available in this repo.
+- Update flutter to the latest build.
+
+## VERSION 1.0.0+ WARNING
 Version 1.0.0 uses the updated MSAL Libraries and moves to Android-X. 1.0.0 IS NOT compatiable with older versions. Please only update to 1.0.+ if you are ready to migrate your android app and change how you call the constructor.
 Version 1+ is however required to use MSAL on iOS 13+
 
@@ -31,11 +43,11 @@ dependencies:
 ```
 ### Android (Kotlin)
 
-NOTE: Due to a [known kotlin issue kotlin](https://youtrack.jetbrains.com/issue/KT-21862) please ensure you are using Kotlin version 1.3.50 or later. To set this, goto your app's android folder, open the build.gradle file, and under buildscript:ext.kotlin_version change the version to 1.3.50 or later.
+Please ensure you are using Kotlin version 1.4.31 or later. To set this, goto your app's android folder, open the build.gradle file, and under buildscript:ext.kotlin_version change the version to 1.4.31 or later.
 
 This section is mostly copied and modified from [the official android MSAL library github repository](https://github.com/AzureAD/microsoft-authentication-library-for-android). Visit the repository for more details and information on how to use it with authentication brokers.
 
-1. Give youyr app internet permissions
+1. Ensure your AndroidManifest.xml includes internet permissions
 
 ```
 <uses-permission android:name="android.permission.INTERNET"/>
@@ -58,7 +70,7 @@ The default redirect url is msal\<YOUR-CLIENT-ID\>://auth however this can now b
 </activity>
 ```
 
-3. Copy the [msal_default_config](https://raw.githubusercontent.com/moodio/msal-flutter/master/doc/templates/msal_default_config.json) from this repository (or make your own if you know what you're doing) and place it into your flutter apps android/src/main/res/raw folder.
+3. Copy the [msal_default_config](https://raw.githubusercontent.com/muljin/msal-flutter/master/doc/templates/msal_default_config.json) from this repository (or make your own if you know what you're doing) and place it into your flutter apps android/src/main/res/raw folder.
 By default/tradition the redirect URL is msal\<YOUR-CLIENT-ID\>://auth for android, however if you have selected a different redirect url please enter that. Note the redirect URL scheme and host combination MUST BE UNIQUE to your application and if you do change it it must also be changed in the activity intent filter in step 2.
 
 *WARNING* DO NOT set the application type to single. the MSAL Flutter wrapper is only compatiable with the newer multiple account configuration.

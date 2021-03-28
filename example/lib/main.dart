@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:msal_flutter/msal_flutter.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -12,22 +11,34 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
-  static const String _authority = "https://msalfluttertest.b2clogin.com/tfp/msalfluttertest.onmicrosoft.com/B2C_1_sisu";
-  static const String _clientId = "5913dfb1-7576-451c-a7ea-a7c5a3f8682a";
-  
+  static const String _authority =
+      "https://msalfluttertest.b2clogin.com/tfp/3fab2993-1fec-4a8c-a6d8-2bfea01e64ea/B2C_1_phonesisu";
+  static const String _redirectUri =
+      "msalc3aab3bb-dd2e-4bb5-8768-38f032570a71://auth";
+  static const String _clientId = "c3aab3bb-dd2e-4bb5-8768-38f032570a71";
+
   String _output = 'NONE';
 
-  PublicClientApplication pca;
+  PublicClientApplication? pca;
 
-  Future<void> _acquireToken() async{
-    if(pca == null){
-      pca = await PublicClientApplication.createPublicClientApplication(_clientId, authority: _authority);
+  Future<void> _acquireToken() async {
+    print("called acquiretoken");
+    //create the PCA if not already created
+    if (pca == null) {
+      print("creating pca...");
+      pca = await PublicClientApplication.createPublicClientApplication(
+          _clientId,
+          authority: _authority,
+          redirectUri: _redirectUri);
     }
 
+    print("pca created");
+
     String res;
-    try{
-      res = await pca.acquireToken(["https://msalfluttertest.onmicrosoft.com/msalbackend/user_impersonation"]);
+    try {
+      res = await pca!.acquireToken(
+          ["https://msalfluttertest.onmicrosoft.com/msaltesterapi/All"]);
+      print(res);
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {
@@ -36,7 +47,7 @@ class _MyAppState extends State<MyApp> {
       res = "invalid config";
     } on MsalInvalidScopeException {
       res = "Invalid scope";
-    }on MsalException {
+    } on MsalException {
       res = "Error getting token. Unspecified reason";
     }
 
@@ -46,14 +57,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _acquireTokenSilently() async {
-    if(pca == null){
-      pca = await PublicClientApplication.createPublicClientApplication(_clientId, authority: _authority);
+    if (pca == null) {
+      print("initializing pca");
+      pca = await PublicClientApplication.createPublicClientApplication(
+          _clientId,
+          redirectUri: _redirectUri,
+          authority: _authority);
     }
-    
+
     String res;
-    try
-    {
-      res = await pca.acquireTokenSilent(["https://msalfluttertest.onmicrosoft.com/msalbackend/user_impersonation"]);
+    try {
+      res = await pca!.acquireTokenSilent(
+          ["https://msalfluttertest.onmicrosoft.com/msaltesterapi/All"]);
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {
@@ -62,9 +77,12 @@ class _MyAppState extends State<MyApp> {
       res = "invalid config";
     } on MsalInvalidScopeException {
       res = "Invalid scope";
-    }on MsalException {
+    } on MsalException {
       res = "Error getting token silently!";
     }
+
+    print("Got token");
+    print(res);
 
     setState(() {
       _output = res;
@@ -73,23 +91,25 @@ class _MyAppState extends State<MyApp> {
 
   Future _logout() async {
     print("called logout");
-    if(pca == null){
-      pca = await PublicClientApplication.createPublicClientApplication(_clientId, authority: _authority);
+    if (pca == null) {
+      pca = await PublicClientApplication.createPublicClientApplication(
+          _clientId,
+          authority: _authority);
     }
 
     print("pca is not null");
     String res;
-    try{
-      await pca.logout();
+    try {
+      await pca!.logout();
       res = "Account removed";
     } on MsalException {
       res = "Error signing out";
-    } on PlatformException catch (e){
+    } on PlatformException catch (e) {
       res = "some other exception ${e.toString()}";
     }
 
     print("setting state");
-    setState((){
+    setState(() {
       _output = res;
     });
   }
@@ -104,13 +124,15 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: <Widget>[
-              RaisedButton( onPressed: _acquireToken, 
-                child: Text('AcquireToken()'),),
-              RaisedButton( onPressed: _acquireTokenSilently,
-                child: Text('AcquireTokenSilently()')),
-              RaisedButton( onPressed: _logout,
-                child: Text('Logout')),
-              Text( _output),
+              ElevatedButton(
+                onPressed: _acquireToken,
+                child: Text('AcquireToken()'),
+              ),
+              ElevatedButton(
+                  onPressed: _acquireTokenSilently,
+                  child: Text('AcquireTokenSilently()')),
+              ElevatedButton(onPressed: _logout, child: Text('Logout')),
+              Text(_output),
             ],
           ),
         ),
