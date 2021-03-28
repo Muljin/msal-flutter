@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
 
   String _output = 'NONE';
 
-  PublicClientApplication pca;
+  PublicClientApplication? pca;
 
   Future<void> _acquireToken() async {
     print("called acquiretoken");
@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
 
     String res;
     try {
-      res = await pca.acquireToken(
+      res = await pca!.acquireToken(
           ["https://msalfluttertest.onmicrosoft.com/msaltesterapi/All"]);
       print(res);
     } on MsalUserCancelledException {
@@ -67,7 +67,7 @@ class _MyAppState extends State<MyApp> {
 
     String res;
     try {
-      res = await pca.acquireTokenSilent(
+      res = await pca!.acquireTokenSilent(
           ["https://msalfluttertest.onmicrosoft.com/msaltesterapi/All"]);
     } on MsalUserCancelledException {
       res = "User cancelled";
@@ -89,28 +89,30 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  // Future _logout() async {
-  //   print("called logout");
-  //   if(pca == null){
-  //     pca = await PublicClientApplication.createPublicClientApplication(_clientId, authority: _authority);
-  //   }
+  Future _logout() async {
+    print("called logout");
+    if (pca == null) {
+      pca = await PublicClientApplication.createPublicClientApplication(
+          _clientId,
+          authority: _authority);
+    }
 
-  //   print("pca is not null");
-  //   String res;
-  //   try{
-  //     await pca.logout();
-  //     res = "Account removed";
-  //   } on MsalException {
-  //     res = "Error signing out";
-  //   } on PlatformException catch (e){
-  //     res = "some other exception ${e.toString()}";
-  //   }
+    print("pca is not null");
+    String res;
+    try {
+      await pca!.logout();
+      res = "Account removed";
+    } on MsalException {
+      res = "Error signing out";
+    } on PlatformException catch (e) {
+      res = "some other exception ${e.toString()}";
+    }
 
-  //   print("setting state");
-  //   setState((){
-  //     _output = res;
-  //   });
-  // }
+    print("setting state");
+    setState(() {
+      _output = res;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,16 +124,14 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 onPressed: _acquireToken,
                 child: Text('AcquireToken()'),
               ),
-              RaisedButton(
+              ElevatedButton(
                   onPressed: _acquireTokenSilently,
                   child: Text('AcquireTokenSilently()')),
-              RaisedButton(
-                  onPressed: () => {}, //_logout,
-                  child: Text('Logout')),
+              ElevatedButton(onPressed: _logout, child: Text('Logout')),
               Text(_output),
             ],
           ),

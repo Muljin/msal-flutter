@@ -1,3 +1,6 @@
+## 2.0.0-alpha.1
+* Updated to V2 libraries
+* Updated Android implementation to utalise new plugin interfaces
 ## 1.0.0+2
 * Updates to readme in regards to kotlin static field issues.
 ## 1.0.0+1

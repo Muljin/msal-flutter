@@ -12,16 +12,8 @@ class PublicClientApplication {
   String? _authority;
   String? _redirectUri;
 
-  /// Create a new PublicClientApplication authenticating as the given [clientId],
-  /// optionally select a [authority], defaulting to the common
-  PublicClientApplication(String clientId, {String authority}) {
-    throw Exception(
-        "Direct call is no longer supported in v1.0, please use static method createPublicClientApplication");
-  }
-
-  PublicClientApplication._create(String clientId,
-      {String authority, String redirectUri}) {
-    _clientId = clientId;
+  PublicClientApplication._create(this._clientId,
+      {String? authority, String? redirectUri}) {
     _authority = authority;
     _redirectUri = redirectUri;
   }
@@ -34,10 +26,10 @@ class PublicClientApplication {
   /// @param iosRedirectUri Override for iOS specific redirectUri
   static Future<PublicClientApplication> createPublicClientApplication(
       String clientId,
-      {String authority,
-      String redirectUri,
-      String androidRedirectUri,
-      String iosRedirectUri}) async {
+      {String? authority,
+      String? redirectUri,
+      String? androidRedirectUri,
+      String? iosRedirectUri}) async {
     //set the correct redirect uri based on platform
     if (Platform.isAndroid && androidRedirectUri != null) {
       redirectUri = androidRedirectUri;

@@ -27,65 +27,7 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var msalApp: IMultipleAccountPublicClientApplication
     private fun isClientInitialized() = ::msalApp.isInitialized
 
-    private fun getAuthCallback(result: Result) : AuthenticationCallback
-    {
-        Log.d("MsalFlutter", "Getting the auth callback object")
-        return object : AuthenticationCallback
-        {
-            override fun onSuccess(authenticationResult: IAuthenticationResult){
-                Log.d("MsalFlutter", "Authentication successful")
-                Log.d("MsalFlutter", authenticationResult.accessToken)
-                Log.d("MsalFlutter", authenticationResult.toString())
 
-                Handler(Looper.getMainLooper()).post {
-                    result.success(authenticationResult.accessToken)
-                }
-            }
-
-            override fun onError(exception: MsalException)
-            {
-                Log.d("MsalFlutter", "Error logging in!")
-                Log.d("MsalFlutter", exception.errorCode)
-                Log.d("MsalFlutter",exception.message ?: "No exception message")
-                Log.d("MsalFlutter", exception.stackTraceToString())
-
-                handleMsalException(exception, result)
-
-            }
-
-            override fun onCancel(){
-                Log.d("MsalFlutter", "Cancelled")
-                Handler(Looper.getMainLooper()).post {
-                    result.error("CANCELLED", "User cancelled", "User cancelled")
-                }
-            }
-        }
-    }
-    
-    private fun getApplicationCreatedListener(result: Result) : IPublicClientApplication.ApplicationCreatedListener {
-        Log.d("MsalFlutter", "Getting the created listener")
-        return object : IPublicClientApplication.ApplicationCreatedListener
-        {
-            override fun onCreated(application: IPublicClientApplication) {
-                msalApp = application as MultipleAccountPublicClientApplication
-                Handler(Looper.getMainLooper()).post {
-                    result.success(true)
-                }
-            }
-
-            override fun onError(exception: MsalException?) {
-                Log.d("MsalFlutter", "Initialize error")
-                if(exception != null){
-                    handleMsalException(exception, result)
-                }else {
-                    Log.d("MsalFlutter","Error thrown without exception")
-                    Handler(Looper.getMainLooper()).post {
-                        result.error("INIT_ERROR", "Error initializting client", exception?.localizedMessage)
-                    }
-                }
-            }
-        }
-    }
 
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -160,6 +102,7 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             msalApp.acquireToken(activity, scopes, getAuthCallback(result))
         }catch(e: MsalException){
+            Log.d("MsalFlutter", "MSAL excepton thrown on acquire token")
             handleMsalException(e, result)
         }catch(e: Throwable){
             Log.d("MsalFlutter", "Throwable thrown");
@@ -171,8 +114,6 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun acquireTokenSilent(scopes: Array<String>?, result: Result)
     {
-        Log.d("MsalFlutter", "Called acquire token silent")
-
         // check if client has been initialized
         if(!isClientInitialized()){
             Log.d("MsalFlutter", "Client has not been initialized")
@@ -193,6 +134,7 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         //ensure accounts exist
         val accounts = msalApp.accounts
         if(accounts.isEmpty()){
+            Log.d("MsalFlutter","Accounts are empty, returning")
             Handler(Looper.getMainLooper()).post {
                 result.error("NO_ACCOUNT", "No account is available to acquire token silently for", null)
             }
@@ -208,19 +150,76 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         } catch(e: MsalException){
             handleMsalException(e, result)
         }catch(e: Throwable){
-            Log.d("MsalFlutter", "Throwable thrown");
+            Log.d("MsalFlutter", "Throwable thrown")
             Handler(Looper.getMainLooper()).post {
                 result.error("UNKNOWN", "An unknown error occured.", e.localizedMessage)
             }
         }
     }
 
+    //removes all logged in accounts
     private fun clearAccounts(){
         while(msalApp.accounts.any()){
             msalApp.removeAccount(msalApp.accounts.first())
         }
     }
 
+    // get the authentication callback object
+    private fun getAuthCallback(result: Result) : AuthenticationCallback
+    {
+        return object : AuthenticationCallback
+        {
+            override fun onSuccess(authenticationResult: IAuthenticationResult){
+                Handler(Looper.getMainLooper()).post {
+                    result.success(authenticationResult.accessToken)
+                }
+            }
+
+            override fun onError(exception: MsalException)
+            {
+                handleMsalException(exception, result)
+            }
+
+            override fun onCancel(){
+                Handler(Looper.getMainLooper()).post {
+                    result.error("CANCELLED", "User cancelled", "User cancelled")
+                }
+            }
+        }
+    }
+
+    // get the application created listener for when initializing new PCA
+    private fun getApplicationCreatedListener(result: Result) : IPublicClientApplication.ApplicationCreatedListener {
+        Log.d("MsalFlutter", "Getting the created listener")
+        return object : IPublicClientApplication.ApplicationCreatedListener
+        {
+            override fun onCreated(application: IPublicClientApplication) {
+                msalApp = application as MultipleAccountPublicClientApplication
+                Handler(Looper.getMainLooper()).post {
+                    result.success(true)
+                }
+            }
+
+            override fun onError(exception: MsalException?) {
+                if(exception != null){
+                    handleMsalException(exception, result)
+                }else {
+                    Log.d("MsalFlutter","Error thrown without exception")
+                    Handler(Looper.getMainLooper()).post {
+                        result.error("INIT_ERROR", "Error initializting client", exception?.localizedMessage)
+                    }
+                }
+            }
+        }
+    }
+
+    // generates the default redirect uri for android
+    private fun getRedirectUri() : String{
+        return "msauth://${context.packageName}/auth"
+        //TODO: Add base64 encoded signature
+    }
+
+    // initializes the PCA
     private fun initialize(clientId: String?, authority: String?, redirectUri: String?, result: Result)
     {
        //ensure clientid provided
@@ -252,11 +251,7 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
        }
    }
 
-    private fun getRedirectUri() : String{
-        return "msauth://${context.packageName}/auth"
-        //TODO: Add base64 encoded signature
-    }
-
+    // logs out user from all accounts
     private fun logout(result: Result){
         clearAccounts()
         Handler(Looper.getMainLooper()).post {
@@ -275,6 +270,9 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             "unknown_error" -> "UNKNOWN"
             else -> "AUTH_ERROR"
         }
+
+        Log.d("MsalFlutter","Msal exception caugth ${exception.errorCode}")
+        Log.d("MsalFlutter", exception.stackTraceToString())
 
         //return result
         Handler(Looper.getMainLooper()).post {
