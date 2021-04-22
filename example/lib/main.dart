@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
 import 'package:msal_flutter/msal_flutter.dart';
 
 void main() => runApp(MyApp());
@@ -13,10 +14,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   static const String _authority =
       "https://msalfluttertest.b2clogin.com/tfp/3fab2993-1fec-4a8c-a6d8-2bfea01e64ea/B2C_1_phonesisu";
-  static const String _redirectUri =
-      "msalc3aab3bb-dd2e-4bb5-8768-38f032570a71://auth";
+  static const String _redirectUri = "msauth.com.muljin.msalflutterv2://auth";
   static const String _clientId = "c3aab3bb-dd2e-4bb5-8768-38f032570a71";
-
   String _output = 'NONE';
 
   PublicClientApplication? pca;
@@ -29,7 +28,7 @@ class _MyAppState extends State<MyApp> {
       pca = await PublicClientApplication.createPublicClientApplication(
           _clientId,
           authority: _authority,
-          redirectUri: _redirectUri);
+          iosRedirectUri: _redirectUri);
     }
 
     print("pca created");
