@@ -1,6 +1,15 @@
+## 2.0.0-alpha.2
+* Updating iOS implementation to match new api
+* Update MSAL flutter library
+* Update iOS deployment target to 9.0
+* Set minimum flutter sdk to >=1.10.0
 ## 2.0.0-alpha.1
-* Updated to V2 libraries
+* Updated to V2 library for Android
 * Updated Android implementation to utalise new plugin interfaces
+* Improvements to kotlin implementation
+* Changed to new repoistory
+* Added null safety
+* Updated license to The 3-Clause BSD License
 ## 1.0.0+2
 * Updates to readme in regards to kotlin static field issues.
 ## 1.0.0+1
