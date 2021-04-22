@@ -1,3 +1,7 @@
+## 2.0.0-alpha.2
+* Updating iOS implementation to match new api
+* Update MSAL flutter library
+* Update iOS deployment target to 9.0
 ## 2.0.0-alpha.1
 * Updated to V2 library for Android
 * Updated Android implementation to utalise new plugin interfaces
