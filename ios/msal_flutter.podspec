@@ -15,9 +15,8 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'MSAL', '~> 1.0.3'
-
-  s.swift_version = '4.0'
-  s.ios.deployment_target = '10.0'
+  s.dependency 'MSAL', '~> 1.1.14'
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '11.0'
 end
 
