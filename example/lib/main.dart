@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
 import 'package:msal_flutter/msal_flutter.dart';
 
 void main() => runApp(MyApp());
@@ -27,7 +28,7 @@ class _MyAppState extends State<MyApp> {
       pca = await PublicClientApplication.createPublicClientApplication(
           _clientId,
           authority: _authority,
-          redirectUri: _redirectUri);
+          iosRedirectUri: _redirectUri);
     }
 
     print("pca created");
