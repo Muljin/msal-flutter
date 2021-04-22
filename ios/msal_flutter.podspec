@@ -3,14 +3,14 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'msal_flutter'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'MSAL Flutter Wrapper'
   s.description      = <<-DESC
 A new flutter plugin project.
                        DESC
-  s.homepage         = 'https://www.moodio.co.uk'
+  s.homepage         = 'https://www.muljin.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Moodio Ltd' => 'mahmoud@moodio.co.uk' }
+  s.author           = { 'Muljin Pte. Ltd.' => 'info@muljin.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'

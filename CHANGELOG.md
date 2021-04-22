@@ -1,3 +1,5 @@
+## 2.0.0-alpha.3
+* Updated podspec file to new identity and increased version
 ## 2.0.0-alpha.2
 * Updating iOS implementation to match new api
 * Update MSAL flutter library
