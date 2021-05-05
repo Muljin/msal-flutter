@@ -1,3 +1,5 @@
+## 2.0.0-alpha.4
+* Updated to allow being reinitialized in android
 ## 2.0.0-alpha.3
 * Updated podspec file to new identity and increased version
 ## 2.0.0-alpha.2

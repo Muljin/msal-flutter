@@ -223,15 +223,15 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
            return
        }
 
-       //if already initialized, ensure clientid hasn't changed
-       if(isClientInitialized()){
-           if(msalApp.configuration.clientId == clientId)
-           {
-               result.success(true)
-           } else {
-               result.error("CHANGED_CLIENTID", "Attempting to initialize with multiple clientIds.", null)
-           }
-       }
+    //    //if already initialized, ensure clientid hasn't changed
+    //    if(isClientInitialized()){
+    //        if(msalApp.configuration.clientId == clientId)
+    //        {
+    //            result.success(true)
+    //        } else {
+    //            result.error("CHANGED_CLIENTID", "Attempting to initialize with multiple clientIds.", null)
+    //        }
+    //    }
 
 
        try {
