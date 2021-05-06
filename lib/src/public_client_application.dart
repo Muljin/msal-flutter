@@ -91,6 +91,8 @@ class PublicClientApplication {
         return MsalInvalidConfigurationException("Client Id not set");
       case "INVALID_AUTHORITY":
         return MsalInvalidConfigurationException("Invalid authroity set.");
+      case "INVALID_GRANT":
+        return MsalInvalidGrantException();
       case "INVALID_REQUEST":
         return MsalInvalidRequestException("Invalid request");
       case "CONFIG_ERROR":

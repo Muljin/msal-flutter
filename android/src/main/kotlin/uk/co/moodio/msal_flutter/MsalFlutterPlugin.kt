@@ -223,16 +223,6 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
            return
        }
 
-    //    //if already initialized, ensure clientid hasn't changed
-    //    if(isClientInitialized()){
-    //        if(msalApp.configuration.clientId == clientId)
-    //        {
-    //            result.success(true)
-    //        } else {
-    //            result.error("CHANGED_CLIENTID", "Attempting to initialize with multiple clientIds.", null)
-    //        }
-    //    }
-
 
        try {
            PublicClientApplication.create(context, clientId, authority, redirectUri
@@ -260,6 +250,7 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             "access_denied" -> "CANCELLED"
             "declined_scope_error" -> "SCOPE_ERROR"
             "invalid_request" -> "INVALID_REQUEST"
+            "invalid_grant" -> "INVALID_GRANT"
             "unknown_authority" -> "INVALID_AUTHORITY"
             "unknown_error" -> "UNKNOWN"
             else -> "AUTH_ERROR"
