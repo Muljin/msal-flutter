@@ -1,3 +1,5 @@
+## 2.0.0-alpha.5
+* Added new exception type for invalid grant for Dart and Android libs.
 ## 2.0.0-alpha.4
 * Updated to allow being reinitialized in android
 ## 2.0.0-alpha.3
