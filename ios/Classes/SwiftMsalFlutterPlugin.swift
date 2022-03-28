@@ -8,6 +8,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
   static var clientId : String = ""
   static var authority : String = ""
   static var redirectUri : String = ""
+    static var keychain:String?
 
   var accessToken = String()
   var applicationContext : MSALPublicClientApplication?
@@ -15,6 +16,8 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
   var currentAccount: MSALAccount?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
+      MSALGlobalConfig.loggerConfig.logMaskingLevel = .settingsMaskAllPII
+      MSALGlobalConfig.loggerConfig.logLevel = .verbose
     let channel = FlutterMethodChannel(name: "msal_flutter", binaryMessenger: registrar.messenger())
     let instance = SwiftMsalFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -28,12 +31,14 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
     let clientId = dict["clientId"] as? String ?? ""
     let authority = dict["authority"] as? String ?? ""
     let redirectUri = dict["redirectUri"] as? String ?? ""
+    let keychain = dict["keychain"] as? String?
+    let browserLogout = dict["browserLogout"] as? Bool ?? false
 
     switch( call.method ){
-      case "initialize": initialize(clientId: clientId, authority: authority, result: result,redirectUri:redirectUri)
+    case "initialize": initialize(clientId: clientId, authority: authority, result: result,redirectUri:redirectUri,keychain: keychain as? String)
       case "acquireToken": acquireToken(scopes: scopes, result: result)
       case "acquireTokenSilent": acquireTokenSilent(scopes: scopes, result: result)
-      case "logout": logout(result: result)
+      case "logout": logout(result: result,browserLogout: browserLogout)
       default: result(FlutterError(code:"INVALID_METHOD", message: "The method called is invalid", details: nil))
     } 
   }
@@ -119,7 +124,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
      - clientId:            The clientID of your application.
      - redirectUri:         A redirect URI of your application.
      */
-  private func initialize(clientId: String, authority: String, result: @escaping FlutterResult,redirectUri : String) {
+    private func initialize(clientId: String, authority: String, result: @escaping FlutterResult,redirectUri : String,keychain:String?) {
    //validate clientid exists
     if(clientId.isEmpty){
         result(FlutterError(code:"NO_CLIENTID", message: "Call must include a clientId", details: nil))
@@ -127,6 +132,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
     }
     SwiftMsalFlutterPlugin.clientId = clientId;
     SwiftMsalFlutterPlugin.authority = authority;
+    SwiftMsalFlutterPlugin.keychain=keychain;
     if SwiftMsalFlutterPlugin.redirectUri.isEmpty {
         updateRedirectUri()
     } else {
@@ -170,6 +176,11 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
                 //create the msal authority and configuration
                 let msalAuthority = try MSALAuthority(url: authorityUrl)
                 config = MSALPublicClientApplicationConfig(clientId: SwiftMsalFlutterPlugin.clientId, redirectUri: SwiftMsalFlutterPlugin.redirectUri, authority: msalAuthority)
+                // validateAuthority' is deprecated: Use knowAuthorities
+                config.knownAuthorities = [msalAuthority]
+                if(SwiftMsalFlutterPlugin.keychain != nil){
+                    config.cacheConfig.keychainSharingGroup = SwiftMsalFlutterPlugin.keychain!
+                }
             } catch {
                 //return error if exception occurs
                 result(FlutterError(code: "INVALID_AUTHORITY", message: "invalid authority", details: nil))
@@ -181,7 +192,8 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         //create the application and return it
         do {
             let application = try MSALPublicClientApplication(configuration: config)
-            application.validateAuthority = false
+//            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
+//            application.validateAuthority = false
             self.applicationContext = application
             initWebViewParams()
             result(true)
@@ -212,7 +224,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         })
     }
 
-    private func logout(result: @escaping FlutterResult)
+    private func logout(result: @escaping FlutterResult,browserLogout:Bool)
     {
        guard let applicationContext = self.applicationContext else {
         
@@ -229,7 +241,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
                  - account:    The account to remove from the cache
                  */
                 let signoutParameters = MSALSignoutParameters(webviewParameters: self.webViewParamaters!)
-                signoutParameters.signoutFromBrowser = false
+                signoutParameters.signoutFromBrowser = browserLogout
                 applicationContext.signout(with: account, signoutParameters: signoutParameters, completionBlock: {(success, error) in
                     if let error = error {
                      result(FlutterError(code: "CONFIG_ERROR", message: "Couldn't sign out account with error: \(error)", details: nil))

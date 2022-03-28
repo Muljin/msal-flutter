@@ -11,11 +11,13 @@ class PublicClientApplication {
   String _clientId;
   String? _authority;
   String? _redirectUri;
+  String? _keychain;
 
   PublicClientApplication._create(this._clientId,
-      {String? authority, String? redirectUri}) {
+      {String? authority, String? redirectUri,String? keychain}) {
     _authority = authority;
     _redirectUri = redirectUri;
+    _keychain = keychain;
   }
 
   ///
@@ -24,12 +26,15 @@ class PublicClientApplication {
   /// @param redirectUri The redirect uri registered for your application for all platforms
   /// @param androidRedirectUri Override for android specific redirectUri
   /// @param iosRedirectUri Override for iOS specific redirectUri
+  /// @param keychain this is only used in ios it won't affect android configuration 
+  /// for more info go to https://docs.microsoft.com/en-us/azure/active-directory/develop/single-sign-on-macos-ios#silent-sso-between-apps
   static Future<PublicClientApplication> createPublicClientApplication(
       String clientId,
       {String? authority,
       String? redirectUri,
       String? androidRedirectUri,
-      String? iosRedirectUri}) async {
+      String? iosRedirectUri,
+      String? keychain}) async {
     //set the correct redirect uri based on platform
     if (Platform.isAndroid && androidRedirectUri != null) {
       redirectUri = androidRedirectUri;
@@ -38,7 +43,7 @@ class PublicClientApplication {
     }
 
     var res = PublicClientApplication._create(clientId,
-        authority: authority, redirectUri: redirectUri);
+        authority: authority, redirectUri: redirectUri,keychain: keychain);
     await res._initialize();
     return res;
   }
@@ -52,7 +57,11 @@ class PublicClientApplication {
       final String token = await _channel.invokeMethod('acquireToken', res);
       return token;
     } on PlatformException catch (e) {
+      print(e.toString());
       throw _convertException(e);
+    } catch (e) {
+      print(e);
+      rethrow;
     }
   }
 
@@ -68,12 +77,16 @@ class PublicClientApplication {
       return token;
     } on PlatformException catch (e) {
       throw _convertException(e);
+    } catch (e) {
+      print(e);
+      rethrow;
     }
   }
 
-  Future logout() async {
+  Future logout({bool browserLogout = false}) async {
     try {
-      await _channel.invokeMethod('logout', <String, dynamic>{});
+      await _channel.invokeMethod(
+          'logout', <String, dynamic>{'browserLogout': browserLogout});
     } on PlatformException catch (e) {
       throw _convertException(e);
     }
@@ -123,6 +136,9 @@ class PublicClientApplication {
 
     if (this._redirectUri != null) {
       res["redirectUri"] = this._redirectUri;
+    }
+    if (this._keychain != null) {
+      res["keychain"] = this._keychain;
     }
 
     try {
