@@ -12,12 +12,17 @@ class PublicClientApplication {
   String? _authority;
   String? _redirectUri;
   String? _keychain;
+  late bool _privateSession;
 
   PublicClientApplication._create(this._clientId,
-      {String? authority, String? redirectUri,String? keychain}) {
+      {String? authority,
+      String? redirectUri,
+      String? keychain,
+      bool? privateSession}) {
     _authority = authority;
     _redirectUri = redirectUri;
     _keychain = keychain;
+    _privateSession = privateSession ?? false;
   }
 
   ///
@@ -26,7 +31,9 @@ class PublicClientApplication {
   /// @param redirectUri The redirect uri registered for your application for all platforms
   /// @param androidRedirectUri Override for android specific redirectUri
   /// @param iosRedirectUri Override for iOS specific redirectUri
-  /// @param keychain this is only used in ios it won't affect android configuration 
+  /// @param privateSession is set to true to request that the browser doesn’t share cookies or other browsing data between the authentication session and the user’s normal browser session. Whether the request is honored depends on the user’s default web browser. Safari always honors the request.
+  /// The value of this property is false by default.
+  /// @param keychain this is only used in ios it won't affect android configuration
   /// for more info go to https://docs.microsoft.com/en-us/azure/active-directory/develop/single-sign-on-macos-ios#silent-sso-between-apps
   static Future<PublicClientApplication> createPublicClientApplication(
       String clientId,
@@ -34,7 +41,8 @@ class PublicClientApplication {
       String? redirectUri,
       String? androidRedirectUri,
       String? iosRedirectUri,
-      String? keychain}) async {
+      String? keychain,
+      bool? privateSession}) async {
     //set the correct redirect uri based on platform
     if (Platform.isAndroid && androidRedirectUri != null) {
       redirectUri = androidRedirectUri;
@@ -43,7 +51,10 @@ class PublicClientApplication {
     }
 
     var res = PublicClientApplication._create(clientId,
-        authority: authority, redirectUri: redirectUri,keychain: keychain);
+        authority: authority,
+        redirectUri: redirectUri,
+        keychain: keychain,
+        privateSession: privateSession);
     await res._initialize();
     return res;
   }
@@ -128,7 +139,10 @@ class PublicClientApplication {
 
   //initialize the main client platform side
   Future _initialize() async {
-    var res = <String, dynamic>{'clientId': this._clientId};
+    var res = <String, dynamic>{
+      'clientId': this._clientId,
+      'privateSession': this._privateSession
+    };
     //if authority has been set, add it aswell
     if (this._authority != null) {
       res["authority"] = this._authority;
