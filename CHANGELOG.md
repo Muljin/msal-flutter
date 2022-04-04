@@ -1,3 +1,9 @@
+## 2.0.0-beta.2
+* broswser privateSession ios-only.
+* msal android bumpup to 2.2.3. ``Note:`` add `authorization_in_current_task:false` to msal_default_config.json
+## 2.0.0-beta.1
+* change default kaychain feature
+* logout from browser
 ## 2.0.0-alpha.5
 * Added new exception type for invalid grant for Dart and Android libs.
 ## 2.0.0-alpha.4

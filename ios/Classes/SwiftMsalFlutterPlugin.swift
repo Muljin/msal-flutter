@@ -33,9 +33,10 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
     let redirectUri = dict["redirectUri"] as? String ?? ""
     let keychain = dict["keychain"] as? String?
     let browserLogout = dict["browserLogout"] as? Bool ?? false
+    let privateSession = dict["privateSession"] as? Bool ?? false
 
     switch( call.method ){
-    case "initialize": initialize(clientId: clientId, authority: authority, result: result,redirectUri:redirectUri,keychain: keychain as? String)
+    case "initialize": initialize(clientId: clientId, authority: authority, result: result,redirectUri:redirectUri,keychain: keychain as? String,privateSession:privateSession)
       case "acquireToken": acquireToken(scopes: scopes, result: result)
       case "acquireTokenSilent": acquireTokenSilent(scopes: scopes, result: result)
       case "logout": logout(result: result,browserLogout: browserLogout)
@@ -124,7 +125,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
      - clientId:            The clientID of your application.
      - redirectUri:         A redirect URI of your application.
      */
-    private func initialize(clientId: String, authority: String, result: @escaping FlutterResult,redirectUri : String,keychain:String?) {
+    private func initialize(clientId: String, authority: String, result: @escaping FlutterResult,redirectUri : String,keychain:String?, privateSession: Bool) {
    //validate clientid exists
     if(clientId.isEmpty){
         result(FlutterError(code:"NO_CLIENTID", message: "Call must include a clientId", details: nil))
@@ -139,7 +140,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         SwiftMsalFlutterPlugin.redirectUri = redirectUri;
     }
     do  {
-        try self.initMSAL(result: result)
+        try self.initMSAL(result: result,privateSession:privateSession)
         loadCurrentAccount(result: result)
     } catch let error {
         result(FlutterError(code: "CONFIG_ERROR", message: "Unable to create MSALPublicClientApplication with error: \(error)", details: nil))
@@ -153,16 +154,22 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
       }
     }
     
-    private func initWebViewParams() {
+    private func initWebViewParams(privateSession: Bool) {
         let viewController: UIViewController = (UIApplication.shared.delegate?.window??.rootViewController)!
         self.webViewParamaters = MSALWebviewParameters(authPresentationViewController: viewController)
+        if #available(iOS 13.0, *) {
+//            self.webViewParamaters?.webviewType = MSALWebviewType.safariViewController
+            self.webViewParamaters?.prefersEphemeralWebBrowserSession =  privateSession
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     /**
 
      Initialize a MSALPublicClientApplication with a given clientID and authority
      */
-    func initMSAL(result: @escaping FlutterResult) throws {
+    func initMSAL(result: @escaping FlutterResult, privateSession: Bool) throws {
         var config: MSALPublicClientApplicationConfig
         //setup the config, using authority if it is set, or defaulting to msal's own implementation if it's not
           if !SwiftMsalFlutterPlugin.authority.isEmpty  {
@@ -195,7 +202,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
 //            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
 //            application.validateAuthority = false
             self.applicationContext = application
-            initWebViewParams()
+            initWebViewParams(privateSession:privateSession)
             result(true)
         } catch let error {
             //return error if exception occurs

@@ -11,6 +11,7 @@
     "broker_redirect_uri_registered": true,
     "web_view_zoom_controls_enabled": true,
     "web_view_zoom_enabled": true,
+    "authorization_in_current_task":false,
     "environment": "Production",
     "power_opt_check_for_network_req_enabled": true,
     "http": {
