@@ -1,8 +1,8 @@
-## UPDATES IN PROGRESS
-Please note updates are currently in progress. We are not currently accepting any PRs.
+## IMPORTANT ANNOUNCEMENT
+For any bugs, please open an issue and we will make our best effort to review it when time permits.
 
-## Version 2.0.0-alpha.1
-Warning this is an EXTREMELY unstable version of the build while we test new features. Please do not upgrade to this package except for testing. Please do not create any github issues in relation to this version.
+## Version 2.0.0
+This package comes as is. Unfortunately we do not have the resources to offer free support, help, or review any PRs. Please feel free to fork or use this package in anyway you like. For paid support options please email us at info@muljin.com.
 
 Version 2.0.0+ have moved to nullable and a non-nullable version will not be available. Please ensure all packages you use support nullable and you have updated to the latest version of stable flutter.
 
