@@ -1,3 +1,5 @@
+## 2.0.1
+* bug fix for ios account loading
 ## 2.0.0
 * stable release
 ## 2.0.0-beta.2
