@@ -64,8 +64,10 @@ The default redirect url is msal\<YOUR-CLIENT-ID\>://auth however this can now b
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="msal<YOUR-CLIENT-ID>"
-            android:host="auth" />
+            <data
+                android:scheme="msauth"
+                android:host="<YOUR_PACKAGE_NAME>"
+                android:path="/<YOUR_BASE64_ENCODED_PACKAGE_SIGNATURE>" />
     </intent-filter>
 </activity>
 ```

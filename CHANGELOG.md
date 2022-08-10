@@ -1,3 +1,6 @@
+## 2.1.0
+* msal android bumpup to 4.0.0. ``Note:`` add `handle_null_taskaffinity: false` to msal_default_config.json
+* check android config setp 2 in ``README`` 
 ## 2.0.1
 * bug fix for ios account loading
 ## 2.0.0

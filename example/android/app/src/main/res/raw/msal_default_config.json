@@ -5,6 +5,7 @@
         "default": true
       }
     ],
+    "handle_null_taskaffinity": false,
     "authorization_user_agent": "DEFAULT",
     "minimum_required_broker_protocol_version": "3.0",
     "multiple_clouds_supported": false,
