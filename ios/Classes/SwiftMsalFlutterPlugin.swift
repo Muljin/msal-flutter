@@ -142,6 +142,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
     do  {
         try self.initMSAL(result: result,privateSession:privateSession)
         loadCurrentAccount(result: result)
+        result(true)
     } catch let error {
         result(FlutterError(code: "CONFIG_ERROR", message: "Unable to create MSALPublicClientApplication with error: \(error)", details: nil))
     }
@@ -203,7 +204,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
 //            application.validateAuthority = false
             self.applicationContext = application
             initWebViewParams(privateSession:privateSession)
-            result(true)
+            return
         } catch let error {
             //return error if exception occurs
             result(FlutterError(code: "CONFIG_ERROR", message: "Unable to create MSALPublicClientApplication  with error: \(error)", details: nil))
