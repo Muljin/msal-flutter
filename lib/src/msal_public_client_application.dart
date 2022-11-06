@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:msal_flutter/src/models/msal_account.dart';
 import 'package:msal_flutter/src/models/msal_public_client_application_config.dart';
@@ -31,8 +33,12 @@ class MSALPublicClientApplication {
       throw e;
     }
   }
+  /// this is `ios` only you need to set web param before initializing the client 
   Future<bool> initWebViewParams(MSALWebviewParameters webviewParameters) async {
     try {
+      if(Platform.isAndroid){
+        return true;
+      }
       final result = await _channel.invokeMethod<bool>('initWebViewParams', webviewParameters.toMap()..removeWhere((key, value) => value==null));
       return result??false;
     } on PlatformException catch (e) {

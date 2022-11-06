@@ -7,6 +7,7 @@ class MSALSilentTokenParameters extends MSALTokenParameters {
     required super.scopes,
     super.correlationId,
     super.extraQueryParameters,
+    super.overrideAuthority,
     this.forceRefresh,
   });
 
@@ -16,6 +17,8 @@ class MSALSilentTokenParameters extends MSALTokenParameters {
       'correlationId': correlationId,
       'extraQueryParameters': extraQueryParameters,
       'forceRefresh': forceRefresh,
+      'authority': overrideAuthority?.authorityUrl.toString(),
+
     };
   }
 
