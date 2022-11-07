@@ -10,3 +10,5 @@ export 'src/models/msal_webview_parameters.dart';
 export 'src/models/msal_signout_parameters.dart';
 export 'src/models/msal_account.dart';
 export 'src/models/msal_result.dart';
+export 'src/models/authority.dart';
+export 'src/models/msal_android_config.dart';
