@@ -123,7 +123,7 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         do {
 
 
-            account = try getAccountById(id: dict["accountId"] as! String)
+            account = try getAccountById(id: dict["accountId"] as? String)
 
         } catch {
             result(FlutterError(code: "NO_ACCOUNT", message: "No account is available to acquire token silently for", details: nil))
@@ -203,9 +203,8 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
                 }
             }
             else{
-                return try self.applicationContext!.account(forHomeAccountId: id!)
+                return try self.applicationContext!.account(forIdentifier: id!)
             }
-            return try self.applicationContext!.account(forIdentifier: id)
         } catch let error {
             throw  error
         }
