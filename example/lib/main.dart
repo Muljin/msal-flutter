@@ -14,15 +14,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static const String _authority =
-      "_authority";
-  static const String _iosRedirectUri = "_iosRedirectUri";
-  static const String _androidRedirectUri = "_androidRedirectUri";
-  static const String _clientId = "_clientId";
+      "https://msalfluttertest.b2clogin.com/tfp/3fab2993-1fec-4a8c-a6d8-2bfea01e64ea/B2C_1_phonesisu";
+  static const String _iosRedirectUri = "msauth.com.muljin.msalflutterv2://auth";
+  static const String _androidRedirectUri =
+      "msauth://uk.co.moodio.msal_flutter_example/TvkGQnk1ERb%2Bl9pB4OeyeWrYmqo%3D";
+  static const String _clientId = "fc6136e7-43d1-489c-b221-630e9e4402d3";
+  static const List<String> _scopes = [
+    "https://msalfluttertest.onmicrosoft.com/msaltesterapi/All"
+  ];
   String _output = 'NONE';
   final config = MSALPublicClientApplicationConfig(
     androidRedirectUri: _androidRedirectUri,
     iosRedirectUri: _iosRedirectUri,
-    clientId: _clientId,androidConfig: MSALAndroidConfig(authorities:[Authority(authorityUrl: Uri.parse(_authority))] ),
+    clientId: _clientId,
+    androidConfig: MSALAndroidConfig(
+        authorities: [Authority(authorityUrl: Uri.parse(_authority))]),
     authority: Uri.parse(_authority),
   );
 
@@ -36,16 +42,16 @@ class _MyAppState extends State<MyApp> {
       print("creating pca...");
       pca = await MSALPublicClientApplication.createPublicClientApplication(
           config);
-        await  pca!.initWebViewParams(MSALWebviewParameters());
+      await pca!.initWebViewParams(MSALWebviewParameters());
     }
 
     print("pca created");
 
     String res = '';
     try {
-      MSALResult? resp = await pca!.acquireToken(MSALInteractiveTokenParameters(
-          scopes: ['scopes']));
-      res = resp?.account.identifier?? 'noAuth';
+      MSALResult? resp = await pca!
+          .acquireToken(MSALInteractiveTokenParameters(scopes: _scopes));
+      res = resp?.account.identifier ?? 'noAuth';
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {
@@ -68,8 +74,7 @@ class _MyAppState extends State<MyApp> {
       print("initializing pca");
       pca = await MSALPublicClientApplication.createPublicClientApplication(
           config);
-        await  pca!.initWebViewParams(MSALWebviewParameters());
-
+      await pca!.initWebViewParams(MSALWebviewParameters());
     }
     try {
       final result = await pca!.loadAccounts();
@@ -79,8 +84,7 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       log(e.toString());
     }
-     setState(() {
-    });
+    setState(() {});
   }
 
   Future<void> _acquireTokenSilently() async {
@@ -88,21 +92,20 @@ class _MyAppState extends State<MyApp> {
       print("initializing pca");
       pca = await MSALPublicClientApplication.createPublicClientApplication(
           config);
-        await  pca!.initWebViewParams(MSALWebviewParameters());
-
+      await pca!.initWebViewParams(MSALWebviewParameters());
     }
 
     String res = 'res';
     try {
-      if (accounts?.isNotEmpty ==true) {
+      // if (accounts?.isNotEmpty == true) {
         final response = await pca!.acquireTokenSilent(
             MSALSilentTokenParameters(
-              scopes: ['scopes'],
+              scopes: _scopes,
               // overrideAuthority: Authority(authorityUrl: Uri.parse(_authority)),
             ),
-            accounts!.first);
+           accounts?.isEmpty==true?null: accounts?.first);
         res = response?.account.identifier ?? '';
-      }
+      // }
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {
@@ -129,8 +132,7 @@ class _MyAppState extends State<MyApp> {
       print("initializing pca");
       pca = await MSALPublicClientApplication.createPublicClientApplication(
           config);
-        await  pca!.initWebViewParams(MSALWebviewParameters());
-
+      await pca!.initWebViewParams(MSALWebviewParameters());
     }
 
     print("pca is not null");
@@ -139,7 +141,6 @@ class _MyAppState extends State<MyApp> {
       if (accounts?.isNotEmpty == true) {
         final resp =
             await pca!.logout(MSALSignoutParameters(), accounts!.first);
-
       }
       res = "Account removed";
     } on MsalException {
@@ -168,20 +169,23 @@ class _MyAppState extends State<MyApp> {
                 onPressed: _acquireToken,
                 child: Text('AcquireToken()'),
               ),
-              
               ElevatedButton(
-                  onPressed: _loadAccount,
-                  child: Text('loadAccount()')),
+                  onPressed: _loadAccount, child: Text('loadAccount()')),
               ElevatedButton(
                   onPressed: _acquireTokenSilently,
                   child: Text('AcquireTokenSilently()')),
               ElevatedButton(onPressed: _logout, child: Text('Logout')),
               Text(_output),
-              Expanded(child: ListView.builder(itemCount: accounts?.length??0,
+              Expanded(
+                  child: ListView.builder(
+                itemCount: accounts?.length ?? 0,
                 itemBuilder: (context, index) {
                   final item = accounts![index];
-                return ListTile(title:Text(item.username??item.identifier) ,);
-              },))
+                  return ListTile(
+                    title: Text(item.username ?? item.identifier),
+                  );
+                },
+              ))
             ],
           ),
         ),
