@@ -97,15 +97,13 @@ class _MyAppState extends State<MyApp> {
 
     String res = 'res';
     try {
-      // if (accounts?.isNotEmpty == true) {
         final response = await pca!.acquireTokenSilent(
             MSALSilentTokenParameters(
               scopes: _scopes,
-              // overrideAuthority: Authority(authorityUrl: Uri.parse(_authority)),
             ),
            accounts?.isEmpty==true?null: accounts?.first);
         res = response?.account.identifier ?? '';
-      // }
+
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {

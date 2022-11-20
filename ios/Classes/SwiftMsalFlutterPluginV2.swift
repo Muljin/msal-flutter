@@ -52,7 +52,6 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
             let config: MSALPublicClientApplicationConfig = try MSALPublicClientApplicationConfig.fromDict(dictionary: dict)
             let application = try MSALPublicClientApplication(configuration: config)
 //            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
-//            application.validateAuthority = false
             applicationContext = application
             result(true)
             return

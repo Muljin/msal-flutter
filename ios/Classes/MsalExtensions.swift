@@ -1,7 +1,3 @@
-//
-//  MsalAccount.swift
-//  msal_flutter
-//
 //  Created by omar mgerbie on 26/9/2022.
 //
 
@@ -106,14 +102,6 @@ extension MSALPublicClientApplicationConfig {
         config.bypassRedirectURIValidation = dictionary["bypassRedirectURIValidation"] as? Bool ?? false
         config.clientApplicationCapabilities = dictionary["clientApplicationCapabilities"] as? [String]
         config.extendedLifetimeEnabled = dictionary["extendedLifetimeEnabled"] as? Bool ?? false
-//        config.knownAuthorities = (dictionary["knownAuthorities"] as? [String])?.map({ (element: String) -> MSALAuthority in
-//            do{
-//                return try MSALAuthority.fromString(entry: element)!
-//
-//            } catch {
-//               return  ;
-//            }
-//        }) ?? []
     var knownAuthorities : [MSALAuthority] = [authority]
             if dictionary["knownAuthorities"] != nil {
                 for item in dictionary["knownAuthorities"] as! [String] {

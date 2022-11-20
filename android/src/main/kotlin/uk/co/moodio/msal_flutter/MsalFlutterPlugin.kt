@@ -96,10 +96,6 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
 
             val extraQueryParameters: MutableList<MutableMap.MutableEntry<String, String>> = ArrayList()
-//            val extraQueryParameters: MutableList<Pair<String, String>> = ArrayList()
-//            var map:MutableMap<String, String> = mutableMapOf();
-//            map.put("ui_locales", "de")
-//            extraQueryParameters.addAll(map.entries)
             val  parameters =  AcquireTokenParameters.Builder().startAuthorizationFromActivity(activity)
                 .withAuthorizationQueryStringParameters(extraQueryParameters)
                 .withScopes(scopes.toList())

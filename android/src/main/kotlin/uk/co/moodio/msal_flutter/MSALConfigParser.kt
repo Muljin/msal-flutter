@@ -18,10 +18,8 @@ class MSALConfigParser {
             val gson:Gson = this.getGsonForLoadingConfiguration()
 
             val file = File.createTempFile("config", "json", null)
-//            val fos = FileOutputStream(tempFile)
-//            fos.write(byteArray)
-            // create a new file
 
+            // create a new file
             file.writeText(gson.toJson(map))
             return file
         }

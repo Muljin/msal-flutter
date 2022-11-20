@@ -49,8 +49,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
   }
     
     private func loadAccounts(result: @escaping FlutterResult){
-//        do {
-//        let accounts: Void = try
+
         self.applicationContext!.accountsFromDevice(for: MSALAccountEnumerationParameters(), completionBlock:{(accounts, error) in
             if error != nil
                      {
@@ -61,20 +60,11 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
                 result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
                 return}
             let map = accountObjs.map{$0.nsDictionary} as [NSDictionary]
-//            self.currentAccount = accountObjs.first
+
                             result(map)
             
         });
-//            if !(accounts.isEmpty) {
-//                let map = accounts.map{$0.nsDictionary} as [NSDictionary]
-//                result(map)
-//            } else {
-//                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
-//            }
-//      } catch {
-//          result(FlutterError(code: "LOAD_ACCOUNTS_ERROR", message: "no recent accounts", details: nil))
-//        //nothing to do really
-//      }
+
     }
     private func setAccount(accountId:String,result: @escaping FlutterResult){
         do {
@@ -95,7 +85,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
 
     private func acquireToken(scopes: [String], result: @escaping FlutterResult,locale:String?,clearSession:Bool?)
     {
-//        clearAccounts()
+
         guard let applicationContext = self.applicationContext else {
             result(FlutterError(code: "CONFIG_ERROR", message: "Unable to find MSALPublicClientApplication", details: nil))
             return
@@ -217,7 +207,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         let viewController: UIViewController = (UIApplication.shared.delegate?.window??.rootViewController)!
         self.webViewParamaters = MSALWebviewParameters(authPresentationViewController: viewController)
         if #available(iOS 13.0, *) {
-//            self.webViewParamaters?.webviewType = MSALWebviewType.safariViewController
+
             self.webViewParamaters?.prefersEphemeralWebBrowserSession =  privateSession
         } else {
             // Fallback on earlier versions
@@ -259,7 +249,6 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         do {
             let application = try MSALPublicClientApplication(configuration: config)
 //            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
-//            application.validateAuthority = false
             self.applicationContext = application
             initWebViewParams(privateSession:privateSession)
             return
