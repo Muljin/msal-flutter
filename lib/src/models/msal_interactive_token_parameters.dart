@@ -29,4 +29,24 @@ class MSALInteractiveTokenParameters extends MSALTokenParameters {
       'loginHint': loginHint,
     };
   }
+
+  MSALInteractiveTokenParameters copyWith({
+    List<String>? scopes,
+    Map<String, dynamic>? extraQueryParameters,
+    String? correlationId,
+    Uri? authority,
+    List<String>? extraScopesToConsent,
+    String? loginHint,
+    MSALPromptType? promptType,
+  }) {
+    return MSALInteractiveTokenParameters(
+      scopes: scopes ?? this.scopes,
+      extraQueryParameters: extraQueryParameters ?? this.extraQueryParameters,
+      correlationId: correlationId ?? this.correlationId,
+      promptType: promptType ?? this.promptType,
+      authority: authority ?? this.authority,
+      extraScopesToConsent: extraScopesToConsent ?? this.extraScopesToConsent,
+      loginHint: loginHint ?? this.loginHint,
+    );
+  }
 }

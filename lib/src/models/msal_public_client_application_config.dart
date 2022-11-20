@@ -24,7 +24,7 @@ class MSALPublicClientApplicationConfig {
   MSALAndroidConfig? androidConfig;
 
   MSALPublicClientApplicationConfig({
-    required String androidRedirectUri,
+    String? androidRedirectUri,
     String? iosRedirectUri,
     required this.clientId,
     this.authority,

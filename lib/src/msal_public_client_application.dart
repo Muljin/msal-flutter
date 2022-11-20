@@ -30,7 +30,7 @@ class MSALPublicClientApplication {
     }
   }
 
-  /// this is `ios` only you need to set web param before initializing the client
+  /// this is `ios` only you need to set web param before acquireing token the client
   Future<bool> initWebViewParams(
       MSALWebviewParameters webviewParameters) async {
     try {
