@@ -1,3 +1,5 @@
+import '/src/utility/extensions/map_cleanup_extension.dart';
+
 class MSALAccountEnumerationParameters {
   String? _identifier;
   String? _username;
@@ -21,6 +23,6 @@ class MSALAccountEnumerationParameters {
       'identifier': _identifier,
       'username': _username,
       'tenantProfileIdentifier': _tenantProfileIdentifier,
-    };
+    }.cleanup();
   }
 }

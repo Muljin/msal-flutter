@@ -1,3 +1,5 @@
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
+
 class MSALCacheConfig {
   String? keychainSharingGroup;
   MSALCacheConfig({
@@ -7,6 +9,6 @@ class MSALCacheConfig {
   Map<String, dynamic> toMap() {
     return {
       'keychainSharingGroup': keychainSharingGroup,
-    };
+    }.cleanup();
   }
 }

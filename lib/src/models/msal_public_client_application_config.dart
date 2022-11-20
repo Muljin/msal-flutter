@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:msal_flutter/src/models/authority.dart';
 import 'package:msal_flutter/src/models/msal_android_config.dart';
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
 
 import 'msal_cache_config.dart';
 import 'msal_slice_config.dart';
@@ -24,9 +25,9 @@ class MSALPublicClientApplicationConfig {
   MSALAndroidConfig? androidConfig;
 
   MSALPublicClientApplicationConfig({
+    required this.clientId,
     String? androidRedirectUri,
     String? iosRedirectUri,
-    required this.clientId,
     this.authority,
     this.bypassRedirectURIValidation = false,
     this.clientApplicationCapabilities,
@@ -37,8 +38,7 @@ class MSALPublicClientApplicationConfig {
     this.sliceConfig,
     this.tokenExpirationBuffer,
     this.androidConfig,
-  }) : assert(androidConfig != null || Platform.isAndroid,
-            'Android config is required for Android platform') {
+  }){
     if (Platform.isAndroid) {
       redirectUri = androidRedirectUri;
     } else {
@@ -52,7 +52,7 @@ class MSALPublicClientApplicationConfig {
       'redirect_uri' :  redirectUri,
       'client_capabilities': clientApplicationCapabilities,
       ...androidConfig?.toMap() ?? {},
-    };
+    }.cleanup();
   }
 
 
@@ -70,7 +70,7 @@ class MSALPublicClientApplicationConfig {
       'sliceConfig': sliceConfig?.toMap(),
       'tokenExpirationBuffer': tokenExpirationBuffer,
     
-    };
+    }.cleanup();
   }
   Map<String, dynamic> toMap() {
     if (Platform.isAndroid) {

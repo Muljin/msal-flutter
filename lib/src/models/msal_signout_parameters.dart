@@ -1,3 +1,5 @@
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
+
 class MSALSignoutParameters {
   final bool? signoutFromBrowser;
   final bool? wipeAccount;
@@ -12,6 +14,6 @@ class MSALSignoutParameters {
       'signoutFromBrowser': signoutFromBrowser,
       'wipeAccount': wipeAccount,
       'wipeCacheForAllAccounts': wipeCacheForAllAccounts,
-    };
+    }.cleanup();
   }
 }

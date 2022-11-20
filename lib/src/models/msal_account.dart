@@ -1,4 +1,6 @@
 
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
+
 class MSALAccount {
   String? username;
   String identifier;
@@ -20,7 +22,7 @@ class MSALAccount {
       'environment': environment,
       'accountClaims': accountClaims,
       'isSSOAccount': isSSOAccount,
-    };
+    }.cleanup();
   }
 
   MSALAccount.fromMap(Map<String, dynamic> map)

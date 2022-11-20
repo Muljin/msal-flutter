@@ -1,5 +1,6 @@
 import 'package:msal_flutter/src/models/ios_modal_presentation_style.dart';
 import 'package:msal_flutter/src/models/msal_webview_type.dart';
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
 
 class MSALWebviewParameters {
   /// A specific webView type for the interactive authentication flow. By default, it will be set to MSALGlobalConfig.defaultWebviewType.
@@ -25,7 +26,7 @@ class MSALWebviewParameters {
       'webviewType': webviewType?.name,
       'prefersEphemeralWebBrowserSession': prefersEphemeralWebBrowserSession,
       'presentationStyle': presentationStyle?.name,
-    };
+    }.cleanup();
   }
 }
 

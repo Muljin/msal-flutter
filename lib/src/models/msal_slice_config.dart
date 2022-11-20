@@ -1,4 +1,6 @@
 
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
+
 class MSALSliceConfig {
   String? slice;
   String? dc;
@@ -11,6 +13,6 @@ class MSALSliceConfig {
     return {
       'slice': slice,
       'dc': dc,
-    };
+    }.cleanup();
   }
 }

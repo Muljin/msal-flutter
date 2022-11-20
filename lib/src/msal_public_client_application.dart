@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import '../msal_flutter.dart';
 import 'exceptions/msal_scope_error_exception.dart';
 
-
 class MSALPublicClientApplication {
   static const MethodChannel _channel = const MethodChannel('msal_flutter');
 
@@ -22,8 +21,8 @@ class MSALPublicClientApplication {
 
   Future<bool> _initialize(MSALPublicClientApplicationConfig config) async {
     try {
-      final result = await _channel.invokeMethod<bool>('initialize',
-          config.toMap()..removeWhere((key, value) => value == null));
+      final result =
+          await _channel.invokeMethod<bool>('initialize', config.toMap());
       return result ?? false;
     } on PlatformException catch (e) {
       throw _convertException(e);
@@ -38,9 +37,7 @@ class MSALPublicClientApplication {
         return true;
       }
       final result = await _channel.invokeMethod<bool>(
-          'initWebViewParams',
-          webviewParameters.toMap()
-            ..removeWhere((key, value) => value == null));
+          'initWebViewParams', webviewParameters.toMap());
       return result ?? false;
     } on PlatformException catch (e) {
       throw _convertException(e);
@@ -51,9 +48,7 @@ class MSALPublicClientApplication {
       [MSALAccountEnumerationParameters? enumerationParameters]) async {
     try {
       final result = await _channel.invokeMethod<List>(
-          'loadAccounts',
-          enumerationParameters?.toMap()
-            ?..removeWhere((key, value) => value == null));
+          'loadAccounts', enumerationParameters?.toMap());
       return result
           ?.map((e) => MSALAccount.fromMap(Map<String, dynamic>.from(e)))
           .toList();
@@ -66,9 +61,7 @@ class MSALPublicClientApplication {
       MSALInteractiveTokenParameters interactiveTokenParameters) async {
     try {
       final result = await _channel.invokeMethod(
-          'acquireToken',
-          interactiveTokenParameters.toMap()
-            ..removeWhere((key, value) => value == null));
+          'acquireToken', interactiveTokenParameters.toMap());
       return result != null
           ? MSALResult.fromMap(Map<String, dynamic>.from(result))
           : null;
@@ -84,7 +77,6 @@ class MSALPublicClientApplication {
       final result = await _channel.invokeMethod('acquireTokenSilent', {
         'accountId': account?.identifier,
         'tokenParameters': silentTokenParameters.toMap()
-          ..removeWhere((key, value) => value == null)
       });
       return result != null
           ? MSALResult.fromMap(Map<String, dynamic>.from(result))
@@ -100,7 +92,6 @@ class MSALPublicClientApplication {
       final result = await _channel.invokeMethod<bool>('logout', {
         'accountId': account.identifier,
         'signoutParameters': signoutParameters.toMap()
-          ..removeWhere((key, value) => value == null)
       });
       return result ?? false;
     } on PlatformException catch (e) {

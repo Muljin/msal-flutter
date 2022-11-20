@@ -1,6 +1,6 @@
-import 'dart:convert';
 
 import 'package:msal_flutter/src/models/msal_token_parameters.dart';
+import 'package:msal_flutter/src/utility/extensions/map_cleanup_extension.dart';
 
 import 'msal_prompt_type.dart';
 
@@ -27,7 +27,7 @@ class MSALInteractiveTokenParameters extends MSALTokenParameters {
       'authority': authority?.toString(),
       'extraScopesToConsent': extraScopesToConsent,
       'loginHint': loginHint,
-    };
+    }.cleanup();
   }
 
   MSALInteractiveTokenParameters copyWith({
