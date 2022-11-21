@@ -1,0 +1,1 @@
+enum AndroidAccountMode { SINGLE, MULTIPLE }

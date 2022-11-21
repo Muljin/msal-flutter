@@ -1,0 +1,5 @@
+enum MsalEnvironment {
+    PreProduction,
+    Production;
+
+}

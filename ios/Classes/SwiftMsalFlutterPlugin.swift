@@ -31,28 +31,73 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
     let clientId = dict["clientId"] as? String ?? ""
     let authority = dict["authority"] as? String ?? ""
     let redirectUri = dict["redirectUri"] as? String ?? ""
+    let locale = dict["locale"] as? String?
+    let accountId = dict["accountId"] as? String?
     let keychain = dict["keychain"] as? String?
     let browserLogout = dict["browserLogout"] as? Bool ?? false
     let privateSession = dict["privateSession"] as? Bool ?? false
-
+      let  clearSession = dict["clearSession"] as? Bool ?? false
     switch( call.method ){
     case "initialize": initialize(clientId: clientId, authority: authority, result: result,redirectUri:redirectUri,keychain: keychain as? String,privateSession:privateSession)
-      case "acquireToken": acquireToken(scopes: scopes, result: result)
+    case "loadAccounts": loadAccounts( result: result)
+    case "setAccount": setAccount( accountId:accountId!!,result: result)
+    case "acquireToken": acquireToken(scopes: scopes, result: result,locale: locale as? String,clearSession:clearSession)
       case "acquireTokenSilent": acquireTokenSilent(scopes: scopes, result: result)
       case "logout": logout(result: result,browserLogout: browserLogout)
       default: result(FlutterError(code:"INVALID_METHOD", message: "The method called is invalid", details: nil))
     } 
   }
+    
+    private func loadAccounts(result: @escaping FlutterResult){
+
+        self.applicationContext!.accountsFromDevice(for: MSALAccountEnumerationParameters(), completionBlock:{(accounts, error) in
+            if error != nil
+                     {
+                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
+                        //Handle error
+                     }
+            guard let accountObjs = accounts else {
+                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
+                return}
+            let map = accountObjs.map{$0.nsDictionary} as [NSDictionary]
+
+                            result(map)
+            
+        });
+
+    }
+    private func setAccount(accountId:String,result: @escaping FlutterResult){
+        do {
+        let accounts = try self.applicationContext!.allAccounts()
+            if !(accounts.isEmpty) {
+              let account = accounts.first(where: { $0.identifier == accountId })
+                self.currentAccount = account
+                result(true)
+            } else {
+                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
+            }
+      } catch {
+          result(FlutterError(code: "LOAD_ACCOUNTS_ERROR", message: "no recent accounts", details: nil))
+        //nothing to do really
+      }
+    }
 
 
-    private func acquireToken(scopes: [String], result: @escaping FlutterResult)
+    private func acquireToken(scopes: [String], result: @escaping FlutterResult,locale:String?,clearSession:Bool?)
     {
-        clearAccounts()
+
         guard let applicationContext = self.applicationContext else {
             result(FlutterError(code: "CONFIG_ERROR", message: "Unable to find MSALPublicClientApplication", details: nil))
             return
         }
         let parameters = MSALInteractiveTokenParameters(scopes: scopes, webviewParameters: self.webViewParamaters!)
+                if clearSession == true {
+                    parameters.promptType = .selectAccount
+                }
+        if(locale != nil){
+            let extraQueryParameters: [String: String] = ["ui_locales": locale!]
+            parameters.extraQueryParameters = extraQueryParameters
+        }
         applicationContext.acquireToken(with: parameters) { (token, error) in
             if let error = error {
                 result(FlutterError(code: "AUTH_ERROR", message: "Could not acquire token: \(error)", details: error.localizedDescription))
@@ -74,7 +119,10 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
             //delete old accounts
              let cachedAccounts = try applicationContext!.allAccounts()
              if !cachedAccounts.isEmpty {
-               try applicationContext!.remove(cachedAccounts.first!)
+                 for account in cachedAccounts {
+                     try applicationContext!.remove(account)
+                 }
+              
              }
            } catch {
              //nothing to do really
@@ -108,7 +156,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         let silentParameters = MSALSilentTokenParameters(scopes: scopes, account: self.currentAccount!)
         self.applicationContext!.acquireTokenSilent(with: silentParameters, completionBlock: { (msalresult, error) in
           guard let authResult = msalresult, error == nil else {
-              result(FlutterError(code: "AUTH_ERROR", message: "Authentication error", details: nil))
+              result(FlutterError(code: "AUTH_ERROR", message: "Authentication error \(String(describing: error))", details: error?.localizedDescription))
               return
           }
           // Get access token from result
@@ -159,7 +207,7 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         let viewController: UIViewController = (UIApplication.shared.delegate?.window??.rootViewController)!
         self.webViewParamaters = MSALWebviewParameters(authPresentationViewController: viewController)
         if #available(iOS 13.0, *) {
-//            self.webViewParamaters?.webviewType = MSALWebviewType.safariViewController
+
             self.webViewParamaters?.prefersEphemeralWebBrowserSession =  privateSession
         } else {
             // Fallback on earlier versions
@@ -201,7 +249,6 @@ public class SwiftMsalFlutterPlugin: NSObject, FlutterPlugin {
         do {
             let application = try MSALPublicClientApplication(configuration: config)
 //            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
-//            application.validateAuthority = false
             self.applicationContext = application
             initWebViewParams(privateSession:privateSession)
             return

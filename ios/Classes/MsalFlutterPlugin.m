@@ -3,6 +3,6 @@
 
 @implementation MsalFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftMsalFlutterPlugin registerWithRegistrar:registrar];
+  [SwiftMsalFlutterPluginV2 registerWithRegistrar:registrar];
 }
 @end
