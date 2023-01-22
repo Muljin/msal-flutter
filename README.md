@@ -1,3 +1,5 @@
+We are looking for start ups to work with for launching our new productised IAM and user management system which greatly simplifies adding user authentication to your app and includes additional functionality for user management and analytics. To find out more or sign up please visit [https://www.joopie.co](https://www.joopie.com "Joopie") and let us know you came from this repo.
+
 ## IMPORTANT ANNOUNCEMENT
 This package comes as is. Unfortunately we do not have the resources to offer free support, help, or review any PRs. Please feel free to fork or use this package in anyway you like. For paid support options please email us at info@muljin.com.
 
