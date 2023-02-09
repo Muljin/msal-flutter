@@ -46,6 +46,7 @@ dependencies:
 Please ensure you are using Kotlin version 1.4.31 or later. To set this, goto your app's android folder, open the build.gradle file, and under buildscript:ext.kotlin_version change the version to 1.4.31 or later.
 
 This section is mostly copied and modified from [the official android MSAL library github repository](https://github.com/AzureAD/microsoft-authentication-library-for-android). Visit the repository for more details and information on how to use it with authentication brokers.
+For msal_flutter version 2.0.* make sure to install version 2.2.3 of the msal android library.
 
 1. Ensure your AndroidManifest.xml includes internet permissions
 
