@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:msal_flutter/src/models/android_account_mode.dart';
 import 'package:msal_flutter/src/models/android_logger_config.dart';
 import 'package:msal_flutter/src/models/authorization_agent.dart';

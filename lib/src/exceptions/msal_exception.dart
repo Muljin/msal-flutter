@@ -1,4 +1,5 @@
 class MsalException implements Exception {
   String errorMessage;
-  MsalException(this.errorMessage);
+  String? errorDetails;
+  MsalException(this.errorMessage, {this.errorDetails});
 }
