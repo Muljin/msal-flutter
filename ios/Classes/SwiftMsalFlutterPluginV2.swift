@@ -25,14 +25,13 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 
         switch (call.method) {
-
-        case "initialize": initialize(result: result, dict: call.arguments as! NSDictionary)
-        case "initWebViewParams": initWebViewParams(result: result, dict: call.arguments as! NSDictionary)
-    case "loadAccounts": loadAccounts( result: result,  dict: call.arguments as? NSDictionary)
-        case "acquireToken": acquireToken(result: result, dict: call.arguments as! NSDictionary)
-        case "acquireTokenSilent": acquireTokenSilent(result: result, dict: call.arguments as! NSDictionary)
-    case "logout": logout(result: result,dict:  call.arguments as! NSDictionary)
-        default: result(FlutterError(code: "INVALID_METHOD", message: "The method called is invalid", details: nil))
+            case "initialize": initialize(result: result, dict: call.arguments as! NSDictionary)
+            case "initWebViewParams": initWebViewParams(result: result, dict: call.arguments as! NSDictionary)
+            case "loadAccounts": loadAccounts( result: result,  dict: call.arguments as? NSDictionary)
+            case "acquireToken": acquireToken(result: result, dict: call.arguments as! NSDictionary)
+            case "acquireTokenSilent": acquireTokenSilent(result: result, dict: call.arguments as! NSDictionary)
+            case "logout": logout(result: result,dict:  call.arguments as! NSDictionary)
+            default: result(FlutterError(code: "INVALID_METHOD", message: "The method called is invalid", details: nil))
         }
 
     }
@@ -51,7 +50,6 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         do {
             let config: MSALPublicClientApplicationConfig = try MSALPublicClientApplicationConfig.fromDict(dictionary: dict)
             let application = try MSALPublicClientApplication(configuration: config)
-//            'validateAuthority' is deprecated: Use knowAuthorities in MSALPublicClientApplicationConfig instead
             applicationContext = application
             result(true)
             return
@@ -93,7 +91,7 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         let parameters = MSALInteractiveTokenParameters.fromDict(dict: dict, param: webViewParameters)
         applicationContext.acquireToken(with: parameters) { (token, error) in
             if let error = error {
-                result(FlutterError(code: "AUTH_ERROR", message: "Could not acquire token: \(error)", details: error.localizedDescription))
+                result(FlutterError(code: self.getErrorCode(error:error), message: "Could not acquire token: \(error)", details: error.localizedDescription))
                 return
             }
             guard let tokenResult: MSALResult = token else {
@@ -133,7 +131,7 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         let silentParameters = MSALSilentTokenParameters.fromDict(dict: dict["tokenParameters"] as! NSDictionary, account: account)
         self.applicationContext!.acquireTokenSilent(with: silentParameters, completionBlock: { (tokenResult, error) in
             guard let authResult = tokenResult, error == nil else {
-                result(FlutterError(code: "AUTH_ERROR", message: "Authentication error \(String(describing: error))", details: error?.localizedDescription))
+                result(FlutterError(code: self.getErrorCode(error:error), message: "Authentication error \(String(describing: error))", details: error?.localizedDescription))
                 return
             }
             result(authResult.toDict())
@@ -207,5 +205,38 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         } catch let error {
             throw  error
         }
+    }
+
+    private func getErrorCode(error: Error?) -> String
+    {
+        guard let error = error as NSError? else { return "AUTH_ERROR"; }
+
+        if error.domain == MSALErrorDomain, let errorCode = MSALError(rawValue: error.code)
+        {
+            switch errorCode
+            {
+                case .interactionRequired:
+                    return "INTERACTION_REQUIRED"
+                case .serverDeclinedScopes:
+                    return "SERVER_DECLINED_SCOPES"
+                case .serverProtectionPoliciesRequired:
+                    return "SERVER_PROTECTION_POLICIES_REQUIRED"
+                case .userCanceled:
+                    return "CANCELLED"
+                case .internal:
+                    return "INTERNAL_ERROR"
+                default:
+                    return "AUTH_ERROR"
+            }
+        }
+                
+        // Handle no internet connection.
+        if error.domain == NSURLErrorDomain && error.code == NSURLErrorNotConnectedToInternet
+        {
+            return "CONNECTION_ERROR"
+        }
+
+        return "AUTH_ERROR"
+
     }
 }

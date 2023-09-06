@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:msal_flutter/src/models/authority.dart';
@@ -38,7 +37,7 @@ class MSALPublicClientApplicationConfig {
     this.sliceConfig,
     this.tokenExpirationBuffer,
     this.androidConfig,
-  }){
+  }) {
     if (Platform.isAndroid) {
       redirectUri = androidRedirectUri;
     } else {
@@ -49,12 +48,11 @@ class MSALPublicClientApplicationConfig {
   Map<String, dynamic> _toMapAndroid() {
     return {
       'client_id': clientId,
-      'redirect_uri' :  redirectUri,
+      'redirect_uri': redirectUri,
       'client_capabilities': clientApplicationCapabilities,
       ...androidConfig?.toMap() ?? {},
     }.cleanup();
   }
-
 
   Map<String, dynamic> _toMapIos() {
     return {
@@ -69,9 +67,9 @@ class MSALPublicClientApplicationConfig {
       'multipleCloudsSupported': multipleCloudsSupported,
       'sliceConfig': sliceConfig?.toMap(),
       'tokenExpirationBuffer': tokenExpirationBuffer,
-    
     }.cleanup();
   }
+
   Map<String, dynamic> toMap() {
     if (Platform.isAndroid) {
       return _toMapAndroid();
