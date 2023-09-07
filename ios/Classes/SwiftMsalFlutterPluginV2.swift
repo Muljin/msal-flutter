@@ -216,7 +216,7 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
             switch errorCode
             {
                 case .interactionRequired:
-                    return "INTERACTION_REQUIRED"
+                    return "INVALID_GRANT" //Same error code with anroid
                 case .serverDeclinedScopes:
                     return "SERVER_DECLINED_SCOPES"
                 case .serverProtectionPoliciesRequired:
