@@ -161,7 +161,9 @@ class MsalFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     //removes all logged in accounts
     private fun clearAccounts(){
         while(msalApp.accounts.any()){
-            msalApp.removeAccount(msalApp.accounts.first())
+            try {
+                msalApp.removeAccount(msalApp.accounts.first())
+            } catch (e: Exception) {}
         }
     }
 
