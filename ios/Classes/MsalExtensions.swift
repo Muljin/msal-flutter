@@ -5,8 +5,7 @@ import Foundation
 import MSAL
 
 extension MSALAccount {
-
-
+    
     var dictionary: [String: Any?] {
         return ["username": username,
                 "identifier": identifier,

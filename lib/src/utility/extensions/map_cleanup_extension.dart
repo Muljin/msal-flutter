@@ -2,9 +2,8 @@
 extension MapCleanup on Map<String, dynamic> {
   Map<String, dynamic> cleanup() {
     removeWhere((key, value) {
-      if (value is List ) {
-        print(key);
-        if(value.isEmpty) {
+      if (value is List) {
+        if (value.isEmpty) {
           return true;
         }
         return false;

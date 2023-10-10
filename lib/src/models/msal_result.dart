@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:msal_flutter/src/models/msal_account.dart';
 
 import 'msal_tenant_profile.dart';
@@ -33,7 +31,8 @@ class MSALResult {
   MSALResult.fromMap(Map<String, dynamic> map)
       : this(
           accessToken: map['accessToken'] ?? '',
-          account: MSALAccount.fromMap(Map<String,dynamic>.from(map['account'])),
+          account:
+              MSALAccount.fromMap(Map<String, dynamic>.from(map['account'])),
           authenticationScheme: map['authenticationScheme'] ?? '',
           authority: Uri.parse(map['authority']),
           authorizationHeader: map['authorizationHeader'] ?? '',
@@ -43,7 +42,10 @@ class MSALResult {
               : null,
           extendedLifeTimeToken: map['extendedLifeTimeToken'],
           idToken: map['idToken'],
-          scopes: List<String>.from(map['scopes']??[]),
-          tenantProfile:map['tenantProfile']==null?null: MSALTenantProfile.fromMap(Map<String,dynamic>.from(map['tenantProfile'])),
+          scopes: List<String>.from(map['scopes'] ?? []),
+          tenantProfile: map['tenantProfile'] == null
+              ? null
+              : MSALTenantProfile.fromMap(
+                  Map<String, dynamic>.from(map['tenantProfile'])),
         );
 }

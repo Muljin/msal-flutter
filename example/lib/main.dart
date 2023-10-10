@@ -15,7 +15,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   static const String _authority =
       "https://msalfluttertest.b2clogin.com/tfp/3fab2993-1fec-4a8c-a6d8-2bfea01e64ea/B2C_1_phonesisu";
-  static const String _iosRedirectUri = "msauth.com.muljin.msalflutterv2://auth";
+  static const String _iosRedirectUri =
+      "msauth.com.muljin.msalflutterv2://auth";
   static const String _androidRedirectUri =
       "msauth://uk.co.moodio.msal_flutter_example/TvkGQnk1ERb%2Bl9pB4OeyeWrYmqo%3D";
   static const String _clientId = "fc6136e7-43d1-489c-b221-630e9e4402d3";
@@ -97,13 +98,12 @@ class _MyAppState extends State<MyApp> {
 
     String res = 'res';
     try {
-        final response = await pca!.acquireTokenSilent(
-            MSALSilentTokenParameters(
-              scopes: _scopes,
-            ),
-           accounts?.isEmpty==true?null: accounts?.first);
-        res = response?.account.identifier ?? '';
-
+      final response = await pca!.acquireTokenSilent(
+          MSALSilentTokenParameters(
+            scopes: _scopes,
+          ),
+          accounts?.isEmpty == true ? null : accounts?.first);
+      res = response?.account.identifier ?? '';
     } on MsalUserCancelledException {
       res = "User cancelled";
     } on MsalNoAccountException {
@@ -137,8 +137,7 @@ class _MyAppState extends State<MyApp> {
     String res;
     try {
       if (accounts?.isNotEmpty == true) {
-        final resp =
-            await pca!.logout(MSALSignoutParameters(), accounts!.first);
+        await pca!.logout(MSALSignoutParameters(), accounts!.first);
       }
       res = "Account removed";
     } on MsalException {

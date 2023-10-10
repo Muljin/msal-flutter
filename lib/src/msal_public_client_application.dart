@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:msal_flutter/src/exceptions/msal_user_interaction_required.dart';
 
 import '../msal_flutter.dart';
 import 'exceptions/msal_scope_error_exception.dart';
@@ -109,6 +110,8 @@ class MSALPublicClientApplication {
         return MsalNoAccountException();
       case "NO_CLIENTID":
         return MsalInvalidConfigurationException("Client Id not set");
+      case "INTERACTION_REQUIRED":
+        return MsalUserInteractionRequired();
       case "INVALID_AUTHORITY":
         return MsalInvalidConfigurationException("Invalid authroity set.");
       case "INVALID_GRANT":
@@ -125,11 +128,12 @@ class MSALPublicClientApplication {
       case "INIT_ERROR":
         return MsalInitializationException();
       case "SCOPE_ERROR":
+      case "SERVER_DECLINED_SCOPES":
         return MsalScopeErrorException();
       case "AUTH_ERROR":
       case "UNKNOWN":
       default:
-        return MsalException("Authentication error");
+        return MsalException("Authentication error", errorDetails: e.message);
     }
   }
 }
